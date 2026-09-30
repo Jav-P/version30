@@ -50,6 +50,20 @@ export class GarminService {
     return (data as GarminDaySummary) ?? null;
   }
 
+  async getHistory(days = 14): Promise<GarminDaySummary[]> {
+    const since = new Date();
+    since.setDate(since.getDate() - (days - 1));
+    const sinceIso = since.toISOString().slice(0, 10);
+
+    const { data } = await this.supabase.client
+      .from('garmin_data')
+      .select('*')
+      .gte('date', sinceIso)
+      .order('date', { ascending: true });
+
+    return (data ?? []) as GarminDaySummary[];
+  }
+
   async syncToday(): Promise<GarminDaySummary> {
     const headers = await this.authHeader();
     const response = await fetch('/api/garmin/sync', { method: 'POST', headers });

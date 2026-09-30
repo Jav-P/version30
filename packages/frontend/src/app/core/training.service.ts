@@ -166,4 +166,43 @@ export class TrainingService {
 
     return data as WorkoutLog;
   }
+
+  /**
+   * Días consecutivos "cumplidos": un día cuenta si fue descanso
+   * (routine_day_id null) o si se marcó completado. Si hoy todavía no
+   * tiene registro, no rompe la racha — simplemente arranca desde ayer.
+   */
+  async getWorkoutStreak(): Promise<number> {
+    const { data } = await this.supabase.client
+      .from('workout_logs')
+      .select('date, routine_day_id, completed')
+      .order('date', { ascending: false })
+      .limit(90);
+
+    if (!data || data.length === 0) {
+      return 0;
+    }
+
+    const byDate = new Map(data.map((row) => [row['date'] as string, row]));
+    const cursor = new Date();
+    if (!byDate.has(this.isoDate(cursor))) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    let streak = 0;
+    for (;;) {
+      const row = byDate.get(this.isoDate(cursor));
+      if (!row) {
+        break;
+      }
+      const dayOk = row['routine_day_id'] === null || row['completed'] === true;
+      if (!dayOk) {
+        break;
+      }
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    return streak;
+  }
 }

@@ -17,6 +17,7 @@ export class Dashboard implements OnInit {
   readonly consumedToday = signal(0);
   readonly latestWeight = signal<WeightLog | null>(null);
   readonly garminToday = signal<GarminDaySummary | null>(null);
+  readonly streak = signal(0);
 
   constructor(
     private readonly authService: AuthService,
@@ -55,6 +56,7 @@ export class Dashboard implements OnInit {
     this.latestWeight.set(weightHistory[0] ?? null);
 
     this.garminToday.set(await this.garminService.getToday());
+    this.streak.set(await this.trainingService.getWorkoutStreak());
   }
 
   get routineProgress(): string | null {

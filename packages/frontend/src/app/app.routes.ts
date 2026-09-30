@@ -28,6 +28,11 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
   },
   {
+    path: 'progreso',
+    loadComponent: () => import('./features/progress/progress').then((m) => m.ProgressPage),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./features/dashboard/dashboard').then((m) => m.Dashboard),
