@@ -22,6 +22,7 @@ export class GarminActivityPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.today.set(await this.garminService.getToday());
     await this.loadActivities();
     await this.loadConsumedToday();
   }

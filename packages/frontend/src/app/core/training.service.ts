@@ -3,6 +3,25 @@ import { SupabaseService } from './supabase.service';
 
 export type RoutineLocation = 'gym' | 'home';
 
+const LOCATION_STORAGE_KEY = 'version30.routineLocation';
+
+export function readStoredRoutineLocation(): RoutineLocation {
+  try {
+    const stored = localStorage.getItem(LOCATION_STORAGE_KEY);
+    return stored === 'home' ? 'home' : 'gym';
+  } catch {
+    return 'gym';
+  }
+}
+
+export function storeRoutineLocation(location: RoutineLocation): void {
+  try {
+    localStorage.setItem(LOCATION_STORAGE_KEY, location);
+  } catch {
+    // Preferencia de solo este dispositivo; si no se puede guardar, no pasa nada.
+  }
+}
+
 export interface RoutineExercise {
   id: string;
   name: string;

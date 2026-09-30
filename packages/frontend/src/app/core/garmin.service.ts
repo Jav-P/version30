@@ -39,6 +39,17 @@ export class GarminService {
     return { Authorization: `Bearer ${token}` };
   }
 
+  async getToday(): Promise<GarminDaySummary | null> {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data } = await this.supabase.client
+      .from('garmin_data')
+      .select('*')
+      .eq('date', today)
+      .maybeSingle();
+
+    return (data as GarminDaySummary) ?? null;
+  }
+
   async syncToday(): Promise<GarminDaySummary> {
     const headers = await this.authHeader();
     const response = await fetch('/api/garmin/sync', { method: 'POST', headers });

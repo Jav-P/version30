@@ -1,23 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
+  readStoredRoutineLocation,
   RoutineDay,
   RoutineLocation,
+  storeRoutineLocation,
   TrainingService,
   WorkoutLog,
   youtubeThumbnail,
 } from '../../core/training.service';
-
-const LOCATION_STORAGE_KEY = 'version30.routineLocation';
-
-function readStoredLocation(): RoutineLocation {
-  try {
-    const stored = localStorage.getItem(LOCATION_STORAGE_KEY);
-    return stored === 'home' ? 'home' : 'gym';
-  } catch {
-    return 'gym';
-  }
-}
 
 @Component({
   selector: 'app-routine',
@@ -26,7 +17,7 @@ function readStoredLocation(): RoutineLocation {
 })
 export class Routine implements OnInit {
   readonly loading = signal(true);
-  readonly location = signal<RoutineLocation>(readStoredLocation());
+  readonly location = signal<RoutineLocation>(readStoredRoutineLocation());
   readonly routineDay = signal<RoutineDay | null>(null);
   readonly log = signal<WorkoutLog | null>(null);
 
@@ -41,11 +32,7 @@ export class Routine implements OnInit {
       return;
     }
     this.location.set(location);
-    try {
-      localStorage.setItem(LOCATION_STORAGE_KEY, location);
-    } catch {
-      // Preferencia de solo este dispositivo; si no se puede guardar, no pasa nada.
-    }
+    storeRoutineLocation(location);
     await this.loadRoutine();
   }
 
