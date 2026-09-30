@@ -1,0 +1,123 @@
+<div class="min-h-screen bg-slate-50">
+  <div class="mx-auto max-w-md px-4 py-6 md:max-w-2xl">
+    <a routerLink="/" class="inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+      <span aria-hidden="true">&larr;</span> Dashboard
+    </a>
+
+    <div class="mt-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-slate-900">Actividad</h1>
+      <button
+        type="button"
+        (click)="sync()"
+        [disabled]="syncing()"
+        class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors disabled:cursor-default disabled:opacity-60"
+      >
+        {{ syncing() ? 'Sincronizando...' : '🔄 Sincronizar hoy' }}
+      </button>
+    </div>
+
+    @if (error()) {
+      <p class="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-600">{{ error() }}</p>
+    }
+
+    @if (today(); as day) {
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <p class="text-xs text-slate-500">Pasos</p>
+          <p class="mt-1 text-xl font-bold text-slate-900">{{ day.steps ?? '—' }}</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <p class="text-xs text-slate-500">Calorías quemadas</p>
+          <p class="mt-1 text-xl font-bold text-slate-900">{{ day.calories ?? '—' }}</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <p class="text-xs text-slate-500">Estrés (prom/máx)</p>
+          <p class="mt-1 text-xl font-bold text-slate-900">
+            {{ day.stress_avg ?? '—' }}/{{ day.stress_max ?? '—' }}
+          </p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <p class="text-xs text-slate-500">FC en reposo</p>
+          <p class="mt-1 text-xl font-bold text-slate-900">{{ day.heart_rate_resting ?? '—' }}</p>
+        </div>
+        @if (day.sleep_duration_minutes) {
+          <div class="col-span-2 rounded-xl border border-slate-200 bg-white p-3 text-center">
+            <p class="text-xs text-slate-500">Sueño</p>
+            <p class="mt-1 text-xl font-bold text-slate-900">
+              {{ (day.sleep_duration_minutes / 60).toFixed(1) }}h
+              @if (day.sleep_quality) {
+                <span class="text-sm font-medium text-slate-500">({{ day.sleep_quality }})</span>
+              }
+            </p>
+          </div>
+        }
+      </div>
+
+      @if (balance !== null) {
+        <div
+          class="mt-3 rounded-xl border p-4 text-center"
+          [class.border-green-200]="balance! >= 0"
+          [class.bg-green-50]="balance! >= 0"
+          [class.border-orange-200]="balance! < 0"
+          [class.bg-orange-50]="balance! < 0"
+        >
+          <p class="text-sm text-slate-600">Balance calórico de hoy</p>
+          <p
+            class="mt-1 text-2xl font-bold"
+            [class.text-green-700]="balance! >= 0"
+            [class.text-orange-700]="balance! < 0"
+          >
+            {{ balance! >= 0 ? 'Déficit de ' : 'Superávit de ' }}{{ abs(balance!) }} kcal
+          </p>
+          <p class="mt-1 text-xs text-slate-500">
+            {{ day.calories }} kcal quemadas − {{ consumedToday() }} kcal consumidas
+          </p>
+        </div>
+      }
+    } @else {
+      <p class="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-center text-sm text-slate-500">
+        Dale a "Sincronizar hoy" para traer tus datos de Garmin.
+      </p>
+    }
+
+    <h2 class="mt-8 text-lg font-semibold text-slate-900">Actividades recientes</h2>
+    @if (loadingActivities()) {
+      <p class="mt-2 text-sm text-slate-500">Cargando...</p>
+    } @else if (activities().length === 0) {
+      <p class="mt-2 text-sm text-slate-500">No hay actividades registradas en Garmin todavía.</p>
+    } @else {
+      <ul class="mt-3 flex flex-col gap-2">
+        @for (activity of activities(); track activity.id) {
+          <li class="rounded-xl border border-slate-200 bg-white p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-slate-800">{{ activity.name }}</span>
+              <span class="text-xs text-slate-500">{{ activity.startTimeLocal }}</span>
+            </div>
+            <div class="mt-1 flex flex-wrap gap-2 text-xs text-slate-600">
+              @if (activity.durationMinutes) {
+                <span class="rounded-full bg-slate-100 px-2 py-0.5">
+                  {{ activity.durationMinutes }} min
+                </span>
+              }
+              @if (activity.distanceKm) {
+                <span class="rounded-full bg-slate-100 px-2 py-0.5">
+                  {{ activity.distanceKm }} km
+                </span>
+              }
+              @if (activity.calories) {
+                <span class="rounded-full bg-orange-100 px-2 py-0.5 text-orange-700">
+                  {{ activity.calories }} kcal
+                </span>
+              }
+              @if (activity.averageHr) {
+                <span class="rounded-full bg-slate-100 px-2 py-0.5">
+                  ❤️ {{ activity.averageHr }} ({{ activity.maxHr }} máx)
+                </span>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

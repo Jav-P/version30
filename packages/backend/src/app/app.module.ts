@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { FoodModule } from './food/food.module';
+import { GarminModule } from './garmin/garmin.module';
 import { SupabaseModule } from './supabase/supabase.module';
 
 @Module({
@@ -11,6 +13,8 @@ import { SupabaseModule } from './supabase/supabase.module';
       envFilePath: 'packages/backend/.env',
     }),
     SupabaseModule,
+    FoodModule,
+    GarminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
