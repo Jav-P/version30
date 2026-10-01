@@ -39,6 +39,18 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
   },
   {
+    path: 'proyectos',
+    loadComponent: () =>
+      import('./features/projects/project-list').then((m) => m.ProjectListPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'proyectos/:id',
+    loadComponent: () =>
+      import('./features/projects/project-detail').then((m) => m.ProjectDetailPage),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./features/dashboard/dashboard').then((m) => m.Dashboard),

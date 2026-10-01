@@ -1,0 +1,91 @@
+<div class="min-h-screen bg-slate-50">
+  <div class="mx-auto max-w-md px-4 py-6 md:max-w-2xl">
+    <a routerLink="/" class="inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+      <span aria-hidden="true">&larr;</span> Dashboard
+    </a>
+
+    <div class="mt-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-slate-900">Proyectos</h1>
+      <button
+        type="button"
+        (click)="showForm.set(!showForm())"
+        class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white"
+      >
+        + Nuevo
+      </button>
+    </div>
+
+    @if (showForm()) {
+      <form
+        class="mt-4 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4"
+        (ngSubmit)="createProject()"
+      >
+        <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          Nombre
+          <input
+            type="text"
+            [(ngModel)]="name"
+            name="name"
+            placeholder="Ej. Finca"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          Objetivo
+          <input
+            type="text"
+            [(ngModel)]="goal"
+            name="goal"
+            placeholder="¿Qué quieres lograr?"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          Fecha objetivo (opcional)
+          <input
+            type="date"
+            [(ngModel)]="targetDate"
+            name="targetDate"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </label>
+        @if (error()) {
+          <p class="text-sm text-red-600">{{ error() }}</p>
+        }
+        <button
+          type="submit"
+          [disabled]="saving()"
+          class="rounded-lg bg-blue-600 py-2 font-semibold text-white disabled:opacity-60"
+        >
+          {{ saving() ? 'Creando...' : 'Crear proyecto' }}
+        </button>
+      </form>
+    }
+
+    @if (projects().length === 0) {
+      <p class="mt-6 text-sm text-slate-400">No tienes proyectos todavía.</p>
+    } @else {
+      <ul class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+        @for (project of projects(); track project.id) {
+          <li>
+            <a
+              [routerLink]="['/proyectos', project.id]"
+              class="block rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300"
+            >
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-800">{{ project.name }}</span>
+                <span class="text-slate-400" aria-hidden="true">&rarr;</span>
+              </div>
+              @if (project.goal) {
+                <p class="mt-1 text-sm text-slate-600">{{ project.goal }}</p>
+              }
+              @if (project.target_date) {
+                <p class="mt-1 text-xs text-slate-400">Meta: {{ project.target_date }}</p>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
