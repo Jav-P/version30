@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-slate-50">
-  <div class="mx-auto max-w-md px-4 py-6 md:max-w-2xl">
+  <div class="mx-auto max-w-md px-4 py-6 md:max-w-2xl lg:max-w-4xl">
     <a routerLink="/" class="inline-flex items-center gap-1 text-sm font-medium text-blue-600">
       <span aria-hidden="true">&larr;</span> Dashboard
     </a>
@@ -17,7 +17,7 @@
 
     @if (showForm()) {
       <form
-        class="mt-4 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4"
+        class="mx-auto mt-4 flex max-w-xl flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4"
         (ngSubmit)="createProject()"
       >
         <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
@@ -65,7 +65,7 @@
     @if (projects().length === 0) {
       <p class="mt-6 text-sm text-slate-400">No tienes proyectos todavía.</p>
     } @else {
-      <ul class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <ul class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         @for (project of projects(); track project.id) {
           <li>
             <a
