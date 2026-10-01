@@ -33,6 +33,12 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
   },
   {
+    path: 'check-diario',
+    loadComponent: () =>
+      import('./features/daily-check/daily-check').then((m) => m.DailyCheckPage),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./features/dashboard/dashboard').then((m) => m.Dashboard),

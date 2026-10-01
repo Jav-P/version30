@@ -1,0 +1,112 @@
+<div class="min-h-screen bg-slate-50">
+  <div class="mx-auto max-w-md px-4 py-6 md:max-w-2xl">
+    <a routerLink="/" class="inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+      <span aria-hidden="true">&larr;</span> Dashboard
+    </a>
+
+    <h1 class="mt-4 text-2xl font-bold text-slate-900">Check diario</h1>
+    <p class="mt-1 text-sm text-slate-500">2-3 minutos: estrés, ánimo, inglés y trabajo.</p>
+
+    <form class="mt-4 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4" (ngSubmit)="save()">
+      <div class="grid grid-cols-2 gap-3">
+        <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          Estrés (1-10)
+          <input
+            type="number"
+            min="1"
+            max="10"
+            [(ngModel)]="stress"
+            name="stress"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          Ánimo (1-10)
+          <input
+            type="number"
+            min="1"
+            max="10"
+            [(ngModel)]="mood"
+            name="mood"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </label>
+      </div>
+
+      <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+        <input
+          type="checkbox"
+          [(ngModel)]="englishAttended"
+          name="englishAttended"
+          class="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+        />
+        ¿Asististe a inglés hoy?
+      </label>
+
+      @if (englishAttended) {
+        <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          ¿Qué aprendiste?
+          <textarea
+            [(ngModel)]="englishNotes"
+            name="englishNotes"
+            rows="2"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          ></textarea>
+        </label>
+      }
+
+      <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+        Resumen del día en el trabajo
+        <textarea
+          [(ngModel)]="workSummary"
+          name="workSummary"
+          rows="3"
+          placeholder="¿Qué hiciste, qué lograste?"
+          class="rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        ></textarea>
+      </label>
+
+      @if (error()) {
+        <p class="text-sm text-red-600">{{ error() }}</p>
+      }
+      @if (saved()) {
+        <p class="text-sm font-medium text-green-600">Guardado ✔</p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="rounded-xl bg-blue-600 py-2.5 font-semibold text-white transition-colors disabled:cursor-default disabled:opacity-60"
+      >
+        {{ saving() ? 'Guardando...' : 'Guardar check de hoy' }}
+      </button>
+    </form>
+
+    @if (history().length > 0) {
+      <h2 class="mt-8 text-lg font-semibold text-slate-900">Historial</h2>
+      <ul class="mt-3 flex flex-col gap-2">
+        @for (check of history(); track check.id) {
+          <li class="rounded-xl border border-slate-200 bg-white p-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-slate-800">{{ check.date }}</span>
+              <span class="flex gap-2 text-xs text-slate-500">
+                @if (check.stress_subjective) {
+                  <span class="rounded-full bg-slate-100 px-2 py-0.5">Estrés {{ check.stress_subjective }}/10</span>
+                }
+                @if (check.mood) {
+                  <span class="rounded-full bg-slate-100 px-2 py-0.5">Ánimo {{ check.mood }}/10</span>
+                }
+                @if (check.english_attended) {
+                  <span class="rounded-full bg-blue-100 px-2 py-0.5 text-blue-700">Inglés ✓</span>
+                }
+              </span>
+            </div>
+            @if (check.work_summary) {
+              <p class="mt-1 text-sm text-slate-600">{{ check.work_summary }}</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
